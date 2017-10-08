@@ -26,20 +26,14 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpNamedEntityRecognizer;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpPosTagger;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
-import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordCoreferenceResolver;
 import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer;
 
 /**
  * Demo class for {@link Dkpro_1_8_Annotator}.
- * <br>
- * <b>Some annotators, especially coreference-annotator, might lead to run-time problems. If so, comment-out the problematic annotators.</b>
  * 
  * <p>
  * Note: you can comment out the annotators, and also replace the implementations. See comments inside the code here.
  * 
- *  
- * 
- *
  * <p>
  * Date: 8 Oct 2017
  * @author Asher Stern
@@ -65,11 +59,13 @@ public class DemoDapDkpro_1_8
 						AnalysisEngineFactory.createEngineDescription(OpenNlpNamedEntityRecognizer.class),
 						AnalysisEngineFactory.createEngineDescription(StanfordNamedEntityRecognizer.class),
 						AnalysisEngineFactory.createEngineDescription(MaltParser.class),
-						AnalysisEngineFactory.createEngineDescription(OpenNlpParser.class),
+						AnalysisEngineFactory.createEngineDescription(OpenNlpParser.class) // This is constituency parser.
 						
-						// Note: if Coreference annotator turns you into runtime problems, comment it out.
-						// There is a known issue with DkPro dependencies related to this annotator (it's solvable, but not trivial).
-						AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class)
+						
+						// Note: Coreference annotator has a run-time issue, and is commented out here.
+						// This is a known issue with DkPro dependencies related to this annotator (it's solvable, but not trivial).
+						// ,
+						// AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class)
 						)
 				);
 		
