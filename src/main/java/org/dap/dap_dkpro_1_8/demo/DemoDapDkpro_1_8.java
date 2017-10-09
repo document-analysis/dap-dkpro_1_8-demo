@@ -26,6 +26,7 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpNamedEntityRecognizer;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpPosTagger;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
+import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordCoreferenceResolver;
 import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer;
 
 /**
@@ -64,8 +65,8 @@ public class DemoDapDkpro_1_8
 						
 						// Note: Coreference annotator has a run-time issue, and is commented out here.
 						// This is a known issue with DkPro dependencies related to this annotator (it's solvable, but not trivial).
-						// ,
-						// AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class)
+						,
+						AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class)
 						)
 				);
 		
@@ -102,9 +103,9 @@ public class DemoDapDkpro_1_8
 		
 		System.out.println();
 		System.out.println("Named entities:");
-		for (Annotation<?> annotation : document.iterable(NamedEntity.class))
+		for (Annotation<? extends NamedEntity> annotation : document.iterable(NamedEntity.class))
 		{
-			String neType = ((NamedEntity)annotation.getAnnotationContents()).getType();
+			String neType = annotation.getAnnotationContents().getType();
 			System.out.println(annotation.getCoveredText()+"/"+neType);
 		}
 		
@@ -114,21 +115,20 @@ public class DemoDapDkpro_1_8
 		
 		System.out.println();
 		System.out.println("Coreference links:");
-		for (Annotation<?> annotation : document.iterable(CoreferenceLink.class))
+		for (Annotation<? extends CoreferenceLink> coreferenceLinkAnnotation : document.iterable(CoreferenceLink.class))
 		{
-			Annotation<CoreferenceLink> coreferenceLinkAnnotation = (Annotation<CoreferenceLink>)annotation;
 			if ( coreferenceLinkAnnotation.getAnnotationReference().equals(coreferenceLinkAnnotation.getAnnotationContents().getFirst()) )
 			{
 				if (coreferenceLinkAnnotation.getAnnotationContents().getNext()!=null) // It is not an single (orphan) coref-link
 				{
-					Annotation<CoreferenceLink> a_coreferenceLinkAnnotation = coreferenceLinkAnnotation;
+					Annotation<? extends CoreferenceLink> a_coreferenceLinkAnnotation = coreferenceLinkAnnotation;
 					while (a_coreferenceLinkAnnotation != null)
 					{
 						System.out.print(a_coreferenceLinkAnnotation.getCoveredText().replaceAll("\\s+", " ")+" -> ");
 						AnnotationReference nextReference = a_coreferenceLinkAnnotation.getAnnotationContents().getNext();
 						if (nextReference != null)
 						{
-							a_coreferenceLinkAnnotation = (Annotation<CoreferenceLink>) document.findAnnotation(nextReference, true);
+							a_coreferenceLinkAnnotation = (Annotation<? extends CoreferenceLink>) document.findAnnotation(nextReference, true);
 						}
 						else
 						{
@@ -143,27 +143,26 @@ public class DemoDapDkpro_1_8
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	private static void printDependencyTrees(Document document)
 	{
 		for (Annotation<?> sentenceAnnotation : document.iterable(Sentence.class))
 		{
-			Annotation<Dependency> root = null;
-			Map<Annotation<Dependency>, List<Annotation<Dependency>>> mapParentToChildren = new LinkedHashMap<>();
-			for (Annotation<?> dependencyAnnotation : document.iterable(Dependency.class, sentenceAnnotation.getBegin(), sentenceAnnotation.getEnd()))
+			Annotation<? extends Dependency> root = null;
+			Map<Annotation<? extends Dependency>, List<Annotation<? extends Dependency>>> mapParentToChildren = new LinkedHashMap<>();
+			for (Annotation<? extends Dependency> dependencyAnnotation : document.iterable(Dependency.class, sentenceAnnotation.getBegin(), sentenceAnnotation.getEnd()))
 			{
-				Dependency dependency = (Dependency)dependencyAnnotation.getAnnotationContents();
+				Dependency dependency = dependencyAnnotation.getAnnotationContents();
 				if (dependency.getGovernor()!=null)
 				{
 					if (dependency.getGovernor().equals(dependency.getDependent()))
 					{
-						root = (Annotation<Dependency>)dependencyAnnotation;
+						root = dependencyAnnotation;
 					}
 					else
 					{
 						Annotation<?> governorTokenAnnotation = document.findAnnotation(dependency.getGovernor(), true);
-						Annotation<Dependency> governorAnnotation = (Annotation<Dependency>) document.iterator(Dependency.class, governorTokenAnnotation.getBegin(), governorTokenAnnotation.getEnd()).next();
-						mapParentToChildren.computeIfAbsent(governorAnnotation, (k)->new LinkedList<Annotation<Dependency>>()).add((Annotation<Dependency>)dependencyAnnotation);
+						Annotation<? extends Dependency> governorAnnotation = document.iterator(Dependency.class, governorTokenAnnotation.getBegin(), governorTokenAnnotation.getEnd()).next();
+						mapParentToChildren.computeIfAbsent(governorAnnotation, (k)->new LinkedList<Annotation<? extends Dependency>>()).add(dependencyAnnotation);
 					}
 				}
 				else
@@ -177,7 +176,7 @@ public class DemoDapDkpro_1_8
 	}
 	
 	
-	private static void printDependencyTree(Map<Annotation<Dependency>, List<Annotation<Dependency>>> mapParentToChildren, Annotation<Dependency> node, int indent)
+	private static void printDependencyTree(Map<Annotation<? extends Dependency>, List<Annotation<? extends Dependency>>> mapParentToChildren, Annotation<? extends Dependency> node, int indent)
 	{
 		if (indent>0)
 		{
@@ -189,10 +188,10 @@ public class DemoDapDkpro_1_8
 		}
 		System.out.println(node.getCoveredText());
 		
-		List<Annotation<Dependency>> children = mapParentToChildren.get(node);
+		List<Annotation<? extends Dependency>> children = mapParentToChildren.get(node);
 		if (children != null)
 		{
-			for (Annotation<Dependency> child : children)
+			for (Annotation<? extends Dependency> child : children)
 			{
 				printDependencyTree(mapParentToChildren, child, indent+1);
 			}
