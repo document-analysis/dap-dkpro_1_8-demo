@@ -95,14 +95,6 @@
 			<version>${dkpro.core.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
-			<artifactId>de.tudarmstadt.ukp.dkpro.core.stanfordnlp-upstream-coref-en-default</artifactId>
-			<version>20161031</version>
-			<scope>system</scope>
-			<systemPath>/home/asher/.m2/repository/de/tudarmstadt/ukp/dkpro/core/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-upstream-coref-en-default/20161031/de.tudarmstadt.ukp.dkpro.core.stanfordnlp-upstream-coref-en-default-20161031.jar</systemPath>
-		</dependency>
-
 	</dependencies>
   
 </project>

@@ -26,7 +26,6 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpNamedEntityRecognizer;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpPosTagger;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
-import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordCoreferenceResolver;
 import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer;
 
 /**
@@ -53,7 +52,7 @@ public class DemoDapDkpro_1_8
 		AnalysisEngine uimaAnnotator = AnalysisEngineFactory.createEngine(
 				AnalysisEngineFactory.createEngineDescription(
 						// Other DKPro annotators can be used. See https://dkpro.github.io/dkpro-core/releases/1.8.0/docs/component-reference.html
-						// Note that some annotators can be removed, if they are not necessary. Remember, however, that some annotators depend on each other.
+						// Note that some annotators can be removed, if they are not necessary. Remember, however, that some annotators depend on others.
 						AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class),
 						AnalysisEngineFactory.createEngineDescription(OpenNlpPosTagger.class),
 						AnalysisEngineFactory.createEngineDescription(OpenNlpChunker.class),
@@ -65,8 +64,8 @@ public class DemoDapDkpro_1_8
 						
 						// Note: Coreference annotator has a run-time issue, and is commented out here.
 						// This is a known issue with DkPro dependencies related to this annotator (it's solvable, but not trivial).
-						,
-						AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class)
+						// ,
+						// AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class)
 						)
 				);
 		
