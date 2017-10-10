@@ -3,7 +3,7 @@
   
   <groupId>com.github.document-analysis</groupId>
   <artifactId>dap-dkpro_1_8-demo</artifactId>
-  <version>0.1</version>
+  <version>0.1.1</version>
   <name>dap-dkpro_1_8-demo</name>
   
   	<properties>
